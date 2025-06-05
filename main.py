@@ -37,13 +37,13 @@ agent=Agent(
 
 
 # chainlit decorator for when a new chat session starts
-@ cl.on_chat_start
+@cl.on_chat_start
 async def handle_chat_start():
     # Send welcome message to user
-    await cl.Message(content="Hello! I am a planting expert").send()
+    await cl.Message(content="👋 Hi! I'm your Social Media Scheduler Agent. Ready to help you plan and post engaging content about your tech journey—Python, JS/TS, Next.js, AI & more. Let's grow your presence with smart, hashtag-optimized posts!").send()
 
 # chainlit decorator for when a new message is received
-@ cl.on_message
+@cl.on_message
 async def handle_message(message: cl.Message):
     # Get the message content from user
     prompt=message.content
