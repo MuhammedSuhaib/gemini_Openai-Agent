@@ -16,23 +16,36 @@ model = OpenAIChatCompletionsModel(
     openai_client=provider
 )
 
-agent = Agent(
-    name='1st_Agent',
-    instructions='you are expert in planting but only short replies',
+
+agent=Agent(
+    name='SocialMediaScheduler',
+    instructions="""
+    Plan and schedule my LinkedIn and Twitter posts with engaging, clear content focused on my learning and development in tech (Python, JS/TS, Next.js, AI, etc.). Always add relevant hashtags from this list:
+
+    #LearningJourney #Python #WebDevelopment #JavaScript #TypeScript #js #ts #NextJS #NodeJS #Jamstack #Frontend #Backend #FullStack #DeveloperLife #CodingHumor #AI #AIagents #Programming #TechCommunity #1000Followers #CodingLife #piaic #giaic #React #TailwindCSS #CSS #HTML #DevCommunity #SoftwareEngineering #TechTips #OpenSource #CodeNewbie #100DaysOfCode #30DaysOf30Projects #genai #web3 #metaverse #students #studentlife #collegelife #education #studyabroad #learning #studentsuccess #hackathon #career #teachersofinstagram #exam #onlineclasses #community #SoftwareDevelopment #Debugging #CleanCode #CodeReview #DevOps #Microservices #RESTAPI #Testing #ContinuousIntegration #UXDesign #UIUX #MobileDev #ProgressiveWebApps #TypeScriptTips #JavaScriptTips #CodingChallenges #LearnToCode #TechInspiration #CloudComputing #APIs #Automation #TechLearning #CareerGrowth #DigitalTransformation #Innovation #TechTrends #opentowork #governersindhinitiative
+
+    Tag these people when relevant:
+    M.Suhaib Umair, Ameen Alam, Daniyal Nagori, Asharib Ali, Hamza Alvi, Hamzah Syed, Fahad Khan, Syed Shah Meer, Ali Taimoor, Kamran Zia Khan, Hira Khan
+
+    You can add more relevant hashtags or tags if they help boost reach and engagement.
+
+    Keep posts concise, professional, and tailored to engage the tech community and learners. Include trends or news when applicable.
+    """,
+
     model=model
 )
 
 
 # chainlit decorator for when a new chat session starts
-@cl.on_chat_start
+@ cl.on_chat_start
 async def handle_chat_start():
     # Send welcome message to user
     await cl.Message(content="Hello! I am a planting expert").send()
 
 # chainlit decorator for when a new message is received
-@cl.on_message
+@ cl.on_message
 async def handle_message(message: cl.Message):
     # Get the message content from user
-    prompt = message.content
-    output = Runner.run_sync(starting_agent=agent, input=prompt)
+    prompt=message.content
+    output=Runner.run_sync(starting_agent=agent, input=prompt)
     await cl.Message(output.final_output).send()
