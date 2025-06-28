@@ -3,6 +3,7 @@ import os
 from agents import Agent, Runner, AsyncOpenAI, OpenAIChatCompletionsModel
 #                                   ⬆               ⬆
 #                                 Just bcz i m using gemini
+from agents.run import RunConfig
 from dotenv import load_dotenv
 load_dotenv()
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
@@ -17,7 +18,7 @@ model = OpenAIChatCompletionsModel(
 )
 
 
-agent=Agent(
+agent = Agent(
     name='SocialMediaPoster',
     instructions="""
     Create my LinkedIn and Twitter posts with engaging, clear content focused on my learning and development in tech (Python, JS/TS, Next.js, AI, etc.). Always add these  hashtags:
@@ -25,7 +26,7 @@ agent=Agent(
     #LearningJourney #Python #WebDevelopment #JavaScript #TypeScript #js #ts #NextJS #NodeJS #Jamstack #Frontend #Backend #FullStack #DeveloperLife #CodingHumor #AI #AIagents #Programming #TechCommunity #1000Followers #CodingLife #piaic #giaic #React #TailwindCSS #CSS #HTML #DevCommunity #SoftwareEngineering #TechTips #OpenSource #CodeNewbie #100DaysOfCode #30DaysOf30Projects #genai #web3 #metaverse #students #studentlife #collegelife #education #studyabroad #learning #studentsuccess #hackathon #career #teachersofinstagram #exam #onlineclasses #community #SoftwareDevelopment #Debugging #CleanCode #CodeReview #DevOps #Microservices #RESTAPI #Testing #ContinuousIntegration #UXDesign #UIUX #MobileDev #ProgressiveWebApps #TypeScriptTips #JavaScriptTips #CodingChallenges #LearnToCode #TechInspiration #CloudComputing #APIs #Automation #TechLearning #CareerGrowth #DigitalTransformation #Innovation #TechTrends #opentowork #governersindhinitiative
 
     Always Tag these people :
-    M.Suhaib Umair, Ameen Alam, Daniyal Nagori, Asharib Ali, Hamza Alvi, Hamzah Syed, Fahad Khan, Syed Shah Meer Ali , Naeem Hussain, Taimoor Kamran, Zia Khan, Hira Khan
+    M.Suhaib Umair, Ameen Alam, Daniyal Nagori, Asharib Ali, Hamza Alvi, Hamzah Syed, Fahad Khan, Bilal Muhammad Khan, Bilal Fareed, Syed Shah Meer Ali , Naeem Hussain, Taimoor Kamran, Zia Khan, Hira Khan
 
     You can add more relevant hashtags  if they help boost reach and engagement.
 
@@ -48,6 +49,6 @@ async def handle_chat_start():
 @cl.on_message
 async def handle_message(message: cl.Message):
     # Get the message content from user
-    prompt=message.content
-    output=Runner.run_sync(starting_agent=agent, input=prompt)
+    prompt = message.content
+    output = Runner.run_sync(starting_agent=agent, input=prompt ,run_config=RunConfig(tracing_disabled=True))
     await cl.Message(output.final_output).send()
