@@ -61,6 +61,7 @@ def oauth_callback(
 @cl.on_chat_start
 async def handle_chat_start():
 
+    cl.user_session.set("history", [])  # Initialize empty chat history
 
     # Send welcome message to user
     await cl.Message(content="👋 Hi! I'm your Social Media Post Agent. Ready to help you plan and post engaging content about your tech journey—Python, JS/TS, Next.js, AI & more. Let's grow your presence with smart, hashtag-optimized posts!").send()
