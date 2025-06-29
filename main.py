@@ -6,6 +6,8 @@ from agents import Agent, Runner, AsyncOpenAI, OpenAIChatCompletionsModel
 from agents.run import RunConfig
 from dotenv import load_dotenv
 load_dotenv()
+from typing import Optional, Dict  # Type hints for better code clarity
+
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 provider = AsyncOpenAI(
     api_key=GEMINI_API_KEY,
@@ -37,11 +39,29 @@ agent = Agent(
 
     model=model
 )
+# Decorator to handle OAuth callback from GitHub
+@cl.oauth_callback
+def oauth_callback(
+    provider_id: str,  # ID of the OAuth provider (GitHub)
+    token: str,  # OAuth access token
+    raw_user_data: Dict[str, str],  # User data from GitHub
+    default_user: cl.User,  # Default user object from Chainlit
+) -> Optional[cl.User]:  # Return User object or None
+    """
+    Handle the OAuth callback from GitHub
+    Return the user object if authentication is successful, None otherwise
+    """
 
+    print(f"Provider: {provider_id}")  # Print provider ID for debugging
+    print(f"User data: {raw_user_data}")  # Print user data for debugging
+
+    return default_user  # Return the default user object
 
 # chainlit decorator for when a new chat session starts
 @cl.on_chat_start
 async def handle_chat_start():
+
+
     # Send welcome message to user
     await cl.Message(content="👋 Hi! I'm your Social Media Post Agent. Ready to help you plan and post engaging content about your tech journey—Python, JS/TS, Next.js, AI & more. Let's grow your presence with smart, hashtag-optimized posts!").send()
 
