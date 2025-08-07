@@ -7,7 +7,7 @@ from agents.run import RunConfig
 from dotenv import load_dotenv
 load_dotenv()
 from typing import Optional, Dict, cast  # Type hints for better code clarity
-from colorama import Fore, init
+from colorama import Fore
 
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 
