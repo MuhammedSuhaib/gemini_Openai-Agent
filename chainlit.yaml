@@ -1,21 +1,22 @@
 chainlit: 2.4.1
 
-# Interface settings
+project:
+  host: 0.0.0.0
+  port: ${PORT}
+  public: true
+
 ui:
   name: "SocialMediaPoster"
   description: "A simple social media posting tool with GitHub authentication built with Python, UV, and Chainlit."
 
-# Message settings
 default_expand_messages: true
 
-# Auth settings
 auth:
   required: true
-  providers: 
+  providers:
     - github
 
-# OAuth Configuration
 oauth_providers:
   github:
     client_id: ${OAUTH_GITHUB_CLIENT_ID}
-    client_secret: ${OAUTH_GITHUB_CLIENT_SECRET} 
+    client_secret: ${OAUTH_GITHUB_CLIENT_SECRET}
