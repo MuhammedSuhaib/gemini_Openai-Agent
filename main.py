@@ -64,7 +64,7 @@ async def start():
 async def main(message: cl.Message):
     """Process incoming messages and generate responses."""
     # Send a thinking message
-    msg = cl.Message(content="Thinking...")
+    msg = cl.Message(content="")
     await msg.send()
 
     agent: Agent = cast(Agent, cl.user_session.get("agent"))
@@ -78,23 +78,25 @@ async def main(message: cl.Message):
     
 
     try:
-        print( "\n \t \t \t  CALLING_AGENT_WITH_CONTEXT\n", Fore.YELLOW + str(history) + "\n" + Fore.RESET )
-        result = Runner.run_sync(starting_agent = agent,
-                    input=history,
-                    run_config=config)
+        print( "\n \t \t \t  CALLING_AGENT_WITH_CONTEXT\n", Fore.YELLOW + str(history) + "\n" + Fore.RESET)
+
+        output = Runner.run_streamed(
+            starting_agent=agent,
+            input=history,
+            run_config=config
+        )
+
+        async for events in output.stream_events():
+            if events.type == 'raw_response_event' and hasattr(events.data, "delta"):
+                msg.content += events.data.delta
+                await msg.update()
         
-        response_content = result.final_output
-        
-        # Update the thinking message with the actual response
-        msg.content = response_content
-        await msg.update()
-    
         # Update the session with the new history.
-        cl.user_session.set("chat_history", result.to_input_list())
+        cl.user_session.set("chat_history", output.to_input_list())
         
         # Optional: Log the interaction
         print(Fore.CYAN + f"User: {message.content} " + Fore.RESET)
-        print(Fore.LIGHTGREEN_EX + f"Assistant: {response_content}" + Fore.RESET)
+        print(Fore.LIGHTGREEN_EX + f"Assistant: {msg.content}" + Fore.RESET)
 
     except Exception as e:
         msg.content = f"Error: {str(e)}"
