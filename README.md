@@ -71,7 +71,8 @@ To deploy:
 This repository includes a GitHub Actions workflow for automated deployment to Hugging Face Spaces. To use it:
 
 1. Add the following secrets to your GitHub repository:
-   - `HF_TOKEN`: Your Hugging Face access token (with write permissions)
+   - From https://huggingface.co/settings/tokens get Your Hugging Face access token and pasted in repo secrets eg:
+     `HF_TOKEN`: Your Hugging Face access token (with write permissions)
    - `HF_SPACE_ID`: Your Space ID in the format `username/space-name`
 
 2. The workflow will automatically deploy to your Space when you push to the `main` branch.
