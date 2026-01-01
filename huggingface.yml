@@ -1,0 +1,6 @@
+# Hugging Face Spaces Configuration
+version: 0.0.1
+sdk: docker
+env:
+  - PORT=7860
+python_version: 3.13

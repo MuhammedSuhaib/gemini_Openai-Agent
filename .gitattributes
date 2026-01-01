@@ -1,0 +1,25 @@
+# Optimize repository size for Hugging Face Spaces
+*.git* filter= -text
+.gitignore filter= -text
+.gitattributes filter= -text
+*.lock filter= -text
+__pycache__/ export-ignore
+*.pyc export-ignore
+*.pyo export-ignore
+*.so export-ignore
+.Python export-ignore
+env/ export-ignore
+venv/ export-ignore
+.venv/ export-ignore
+pip-log.txt export-ignore
+pip-delete-this-directory.txt export-ignore
+.tox export-ignore
+.coverage export-ignore
+.coverage.* export-ignore
+.cache export-ignore
+nosetests.xml export-ignore
+coverage.xml export-ignore
+*.cover export-ignore
+*.log export-ignore
+.git/ export-ignore
+!.env.example
