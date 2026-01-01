@@ -1,3 +1,12 @@
+---
+title: GiaicLinkedinPosts
+emoji: ✍🏻
+colorFrom: blue
+colorTo: purple
+sdk: docker
+pinned: false
+---
+
 # SocialMediaScheduler Agent
 
 A Chainlit-based AI agent that plans and schedules engaging LinkedIn and Twitter posts focused on tech learning (Python, JS/TS, Next.js, AI, etc.).
