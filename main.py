@@ -16,24 +16,6 @@ GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 if not GEMINI_API_KEY:
     raise ValueError("GEMINI_API_KEY is not set. Please ensure it is defined in your .env file.")
 
-# Decorator to handle OAuth callback from GitHub
-@cl.oauth_callback
-def oauth_callback(
-    provider_id: str,  # ID of the OAuth provider (GitHub)
-    token: str,  # OAuth access token
-    raw_user_data: Dict[str, str],  # User data from GitHub
-    default_user: cl.User,  # Default user object from Chainlit
-) -> Optional[cl.User]:  # Return User object or None
-    """
-    Handle the OAuth callback from GitHub
-    Return the user object if authentication is successful, None otherwise
-    """
-
-    print(f"Provider: {provider_id}")  # Print provider ID for debugging
-    print(f"User data: {raw_user_data}")  # Print user data for debugging
-
-    return default_user  # Return the default user object
-
 @cl.on_chat_start
 async def start():
 
