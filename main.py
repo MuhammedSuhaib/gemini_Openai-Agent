@@ -23,27 +23,18 @@ async def start():
     """Set up the chat session when a user connects."""
     # Initialize an empty chat history in the session.
     cl.user_session.set("chat_history", [])
-
-    agent = Agent(
-        name='SocialMediaPoster',
-        instructions = 
-        """
-        Only generate a LinkedIn and Twitter post *when clearly asked*. Do nothing if the message doesn't request a post (e.g., "hi", "how are you", etc.).
-
-        When asked, create short, engaging, and clear content focused on my learning in tech (Python, JS/TS, Next.js, AI, etc.). Always add these hashtags:
-
-        #LearningJourney #Python #WebDevelopment #JavaScript #TypeScript #js #ts #NextJS #NodeJS #Jamstack #Frontend #Backend #FullStack #DeveloperLife #CodingHumor #AI #AIagents #Programming #TechCommunity #1000Followers #CodingLife #piaic #giaic #React #TailwindCSS #CSS #HTML #DevCommunity #SoftwareEngineering #TechTips #OpenSource #CodeNewbie #100DaysOfCode #30DaysOf30Projects #genai #web3 #metaverse #students #studentlife #collegelife #education #studyabroad #learning #studentsuccess #hackathon #career #teachersofinstagram #exam #onlineclasses #community #SoftwareDevelopment #Debugging #CleanCode #CodeReview #DevOps #Microservices #RESTAPI #Testing #ContinuousIntegration #UXDesign #UIUX #MobileDev #ProgressiveWebApps #TypeScriptTips #JavaScriptTips #CodingChallenges #LearnToCode #TechInspiration #CloudComputing #APIs #Automation #TechLearning #CareerGrowth #DigitalTransformation #Innovation #TechTrends #opentowork #governersindhinitiative
-
-        Always tag:
-        @M.Suhaib Umair, @Ameen Alam, @Daniyal Nagori, @Asharib Ali, @Hamza Alvi, @Hamzah Syed, @Fahad Khan, @Bilal Muhammad Khan, @Bilal Fareed, @Syed Shah Meer Ali, @Naeem Hussain, @Taimoor Kamran, @Zia Khan, @Hira Khan
-
-        You can add more relevant hashtags if needed for better reach.
-
-        Keep posts short, professional, and engaging. Use trends/news if relevant. Only post *when asked explicitly*.
-        If the message is not a clear request for a post , do not respond. Avoid irrelevant or off-topic replies.
-        """,
-        model=model_config
+    # Triage Agent — decides who should handle the query
+    Triage_Agent = math_agent.clone(
+        name="Triage_Agent",
+        instructions=(
+            "Help the user by routing them to the right specialist.\n"
+            "If math → handoff to math_agent.\n"
+            "If physics → handoff to physics_agent.\n"
+            "If hotel → handoff to hotel_assistant."
+        ),
+        handoffs=[math_agent, physics_agent, hotel_assistant],
     )
+    
 
     cl.user_session.set("agent", agent)  # Store the agent in user session
     cl.user_session.set("config", RunConfig())  # Store default config in user session
