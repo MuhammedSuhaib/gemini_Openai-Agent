@@ -9,7 +9,7 @@ load_dotenv()
 from configs.config import model_config
 from typing import cast  # Type hints for better code clarity
 from colorama import Fore
-
+from agents.agents import MuhammadSuhaibAssistant, SocialMediaPoster
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 
 
@@ -23,20 +23,27 @@ async def start():
     """Set up the chat session when a user connects."""
     # Initialize an empty chat history in the session.
     cl.user_session.set("chat_history", [])
-    # Triage Agent — decides who should handle the query
-    Triage_Agent = math_agent.clone(
-        name="Triage_Agent",
-        instructions=(
-            "Help the user by routing them to the right specialist.\n"
-            "If math → handoff to math_agent.\n"
-            "If physics → handoff to physics_agent.\n"
-            "If hotel → handoff to hotel_assistant."
-        ),
-        handoffs=[math_agent, physics_agent, hotel_assistant],
-    )
-    
+# Triage Agent — routes to correct custom agent
 
-    cl.user_session.set("agent", agent)  # Store the agent in user session
+    Triage_Agent = Agent(
+        name="Triage_Agent",
+        instructions="""
+        Decide which specialist should handle the request.
+
+        Routing rules:
+        - If the query is about Muhammad Suhaib, his profile, career, skills, or projects → handoff to MuhammadSuhaibAssistant.
+        - If the user explicitly asks for a LinkedIn or Twitter post → handoff to SocialMediaPoster.
+        - Otherwise, respond that no suitable agent is available.
+        """,
+        model=model_config,
+        handoffs=[
+            MuhammadSuhaibAssistant,
+            SocialMediaPoster
+        ]
+    )
+
+
+    cl.user_session.set("agent", Triage_Agent)  # Store the agent in user session
     cl.user_session.set("config", RunConfig())  # Store default config in user session
 
     # Send welcome message to user
