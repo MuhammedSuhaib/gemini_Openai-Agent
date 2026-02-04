@@ -6,7 +6,8 @@ from agents import Agent, Runner, AsyncOpenAI, OpenAIChatCompletionsModel
 from agents.run import RunConfig
 from dotenv import load_dotenv
 load_dotenv()
-from typing import Optional, Dict, cast  # Type hints for better code clarity
+from configs.config import model_config
+from typing import cast  # Type hints for better code clarity
 from colorama import Fore
 
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
@@ -18,16 +19,6 @@ if not GEMINI_API_KEY:
 
 @cl.on_chat_start
 async def start():
-
-    external_client = AsyncOpenAI(
-        api_key=GEMINI_API_KEY,
-        base_url='https://generativelanguage.googleapis.com/v1beta/openai/'
-    )
-
-    model = OpenAIChatCompletionsModel(
-        model='gemini-2.5-flash',
-        openai_client=external_client 
-    )
 
     """Set up the chat session when a user connects."""
     # Initialize an empty chat history in the session.
@@ -51,7 +42,7 @@ async def start():
         Keep posts short, professional, and engaging. Use trends/news if relevant. Only post *when asked explicitly*.
         If the message is not a clear request for a post , do not respond. Avoid irrelevant or off-topic replies.
         """,
-        model=model
+        model=model_config
     )
 
     cl.user_session.set("agent", agent)  # Store the agent in user session

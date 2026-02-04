@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Social Media Post Agent (Test)</title>
+</head>
+<body>
+
+<h3>Social Media Post Agent</h3>
+
+<div id="chat" style="border:1px solid #ccc; padding:10px; height:300px; overflow:auto;"></div>
+
+<br />
+
+<input id="input" type="text" placeholder="Type your message..." style="width:80%;" />
+<button onclick="send()">Send</button>
+
+<script>
+const chat = document.getElementById("chat");
+const input = document.getElementById("input");
+
+function add(role, text) {
+  const p = document.createElement("p");
+  p.innerHTML = `<b>${role}:</b> ${text}`;
+  chat.appendChild(p);
+  chat.scrollTop = chat.scrollHeight;
+  return p;
+}
+
+async function send() {
+  const text = input.value.trim();
+  if (!text) return;
+
+  add("User", text);
+  input.value = "";
+
+  const agentMsg = add("Agent", "");
+
+  const res = await fetch("http://127.0.0.1:8000/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: text })
+  });
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+
+  while (true) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    agentMsg.innerHTML += decoder.decode(value);
+    chat.scrollTop = chat.scrollHeight;
+  }
+}
+</script>
+
+</body>
+</html>
