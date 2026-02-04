@@ -1,15 +1,18 @@
 import chainlit as cl
 import os
-from agents import Agent, Runner, AsyncOpenAI, OpenAIChatCompletionsModel
-#                                   ⬆               ⬆
-#                                 Just bcz i m using gemini
+from agents import Agent, Runner, set_tracing_export_api_key, trace
 from agents.run import RunConfig
 from dotenv import load_dotenv
 load_dotenv()
 from configs.config import model_config
 from typing import cast  # Type hints for better code clarity
 from colorama import Fore
-from agents.agents import MuhammadSuhaibAssistant, SocialMediaPoster
+from my_agents.agents import MuhammadSuhaibAssistant, SocialMediaPoster
+
+
+# Initialize tracing globally
+set_tracing_export_api_key(os.getenv('Tracing_key'))
+
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 
 
@@ -47,7 +50,7 @@ async def start():
     cl.user_session.set("config", RunConfig())  # Store default config in user session
 
     # Send welcome message to user
-    await cl.Message(content="👋 Hi!  I'm your Social Media Post Agent. Ready to help you plan and post engaging content about your tech journey—Python, JS/TS, Next.js, AI & more. Let's grow your presence with smart, hashtag-optimized posts!").send()
+    await cl.Message(content="👋 Hi! I'm your Social Media Post Agent. Ready to help you plan and post engaging content about your tech journey—Python, JS/TS, Next.js, AI & more. Let's grow your presence with smart, hashtag-optimized posts!").send()
 
 @cl.on_message
 async def main(message: cl.Message):
@@ -65,15 +68,19 @@ async def main(message: cl.Message):
     # Append the user's message to the history.
     history.append({"role": "user", "content": message.content})
     
+    # Use the session ID for tracing group_id
+    session_id = cl.user_session.get("id", "chainlit-session")
 
     try:
         print( "\n \t \t \t  CALLING_AGENT_WITH_CONTEXT\n", Fore.YELLOW + str(history) + "\n" + Fore.RESET)
 
-        output = Runner.run_streamed(
-            starting_agent=agent,
-            input=history,
-            run_config=config
-        )
+        # Wrap the execution in a trace block
+        with trace(workflow_name="Chainlit Social Media Assistant", group_id=str(session_id)):
+            output = Runner.run_streamed(
+                starting_agent=agent,
+                input=history,
+                run_config=config
+            )
 
         async for events in output.stream_events():
             if events.type == 'raw_response_event' and hasattr(events.data, "delta"):
